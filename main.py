@@ -75,17 +75,38 @@ def get_name(y):
 # Mainline code
 # -----------------------------------------------------------------------------------------------------------------------
 
-# Open the JSON file and parse it with standard library
+# Command line parameters
+# main.py [json-file] [mongo db url]
+# Defaults: sample-data.json 127.0.0.1
 
-with open('/Users/MITHUN/PycharmProjects/ParseJSON/sample-data.json') as access_json:
+json_file_spec = "sample-data.json"
+mongo_url="127.0.0.1"
+
+if len(sys.argv)==1:
+    pass
+elif len(sys.argv)==2:
+    json_file_spec=sys.argv[1]
+elif len(sys.argv)==3:
+    json_file_spec=sys.argv[1]
+    mongo_url=sys.argv[2]
+else:
+    pass
+
+# Print the command line arguments
+print("Json-file: " + json_file_spec + " MongoDB URL: " + mongo_url)
+
+# Open the JSON file and parse it with standard library
+with open(json_file_spec) as access_json:
     input_json = json.load(access_json)
+
+access_json.close()
 
 output_records = []
 
 for record in input_json:
     status = get_status(record)
     name = get_name(record)
-    cpu = get_stats(record)
+    stats = get_stats(record)
     created_at = get_creation_time(record)
 
     # Create final output record
@@ -95,22 +116,22 @@ for record in input_json:
     output_record['name'] = name
     output_record['created_at'] = created_at
 
-    output_record['cpu'] = cpu['cpu']
-    output_record['memory_usage'] = cpu['memory_usage']
-    output_record['ip_addresses'] = cpu['ip_addresses']
+    output_record['cpu'] = stats['cpu']
+    output_record['memory_usage'] = stats['memory_usage']
+    output_record['ip_addresses'] = stats['ip_addresses']
 
     output_records.append(output_record)
 
 # Print to the standard output for debugging and diagnostics
 count = 0
 for one_record in output_records:
-#    print(str(count) + ": " + str(one_record))
+    print(str(count) + ": " + str(one_record))
     count = count + 1
 
 # Connect to the Mongo database (localhost) and insert all output records as documents to
 # the database
 try:
-    client = MongoClient("127.0.0.1")
+    client = MongoClient(mongo_url)
     client.drop_database("json_test_db")
     database = client.get_database("json_test_db")
     collection = database.get_collection("json_test_collection")
@@ -126,5 +147,5 @@ try:
 
 except:
     print("Connection to the database failed")
-    sys.exc_info[0]()
+    print(str(sys.exc_info()))
     exit(-1)
