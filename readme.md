@@ -15,5 +15,3 @@ The values are then inserted as documents to a MongoDB
 * Mongo database
 
 #Usage
-
-
