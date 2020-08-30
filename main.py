@@ -121,10 +121,14 @@ for record in input_json:
     output_records.append(output_record)
 
 # Print to the standard output for debugging and diagnostics
+print ("Debugging output...")
 count = 0
 for one_record in output_records:
     print(str(count) + ": " + str(one_record))
     count = count + 1
+print()
+print()
+
 
 # Connect to the Mongo database (localhost) and insert all output records as documents to
 # the database
@@ -138,6 +142,7 @@ try:
     # Run query command to verify documents are in the database, display no of documents
     cursor = collection.find()
     doc_count=0;
+    print("Listing documents retrieved from the database")
     for doc in cursor:
         print(doc)
         doc_count=doc_count+1
