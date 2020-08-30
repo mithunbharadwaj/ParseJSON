@@ -1,8 +1,6 @@
 import json
 import sys
 
-import mongo
-import pymongo
 from pymongo import MongoClient
 
 
